@@ -1,0 +1,48 @@
+﻿<navigation:Page
+  x:Class="HierarchyDataTest.Home" 
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:navigation="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Navigation"
+  mc:Ignorable="d" d:DesignWidth="640" d:DesignHeight="480"  
+  Style="{StaticResource PageStyle}" xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk" xmlns:riaControls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.DomainServices" xmlns:my="clr-namespace:HierarchyDataTest.Web.Services" xmlns:my1="clr-namespace:HierarchyDataTest.Web">
+    <sdk:Page.Resources>
+        <CollectionViewSource x:Key="productGroupChildrenProductGroupsViewSource" Source="{Binding Path=Data.ChildrenProductGroups, ElementName=productGroupDomainDataSource1}" />
+        <my:HierachicalDataContext x:Key="MainDataContext"/>
+    </sdk:Page.Resources>
+    <Grid x:Name="LayoutRoot">
+        <ScrollViewer x:Name="PageScrollViewer" Style="{StaticResource PageScrollViewerStyle}" >
+
+            <StackPanel x:Name="ContentStackPanel" Style="{StaticResource ContentStackPanelStyle}">
+
+                <TextBlock x:Name="HeaderText" Style="{StaticResource HeaderTextStyle}" 
+                           Text="{Binding Path=ApplicationStrings.HomePageTitle, Source={StaticResource ResourceWrapper}}"/>
+                <TextBlock x:Name="ContentText" Style="{StaticResource ContentTextStyle}" 
+                           Text="Home page content"/>
+                <riaControls:DomainDataSource AutoLoad="True" d:DesignData="{d:DesignInstance my1:ProductGroup, CreateList=true}" Height="0" LoadedData="productGroupDomainDataSource_LoadedData" Name="productGroupDomainDataSource" QueryName="GetRootProductGroupsQuery" Width="0" DomainContext="{StaticResource MainDataContext}">
+                </riaControls:DomainDataSource>
+                <sdk:TreeView Height="Auto" ItemsSource="{Binding ElementName=productGroupDomainDataSource, Path=Data}" Name="productGroupTreeView" Width="Auto" >
+                    <sdk:TreeView.ItemTemplate>
+                        <sdk:HierarchicalDataTemplate ItemsSource="{Binding Path=ChildrenProductGroups}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox Margin="2" Text="{Binding Name, Mode=TwoWay}" FontSize="12" />
+                                <TextBlock Margin="2" Text="{Binding ChildrenProductGroups.Count, Mode=OneWay }" FontSize="12" />
+                            </StackPanel>
+                        </sdk:HierarchicalDataTemplate>
+                    </sdk:TreeView.ItemTemplate>
+                </sdk:TreeView>
+                <riaControls:DomainDataSource AutoLoad="True" d:DesignData="{d:DesignInstance my1:ProductGroup, CreateList=true}" Height="0" LoadedData="productGroupDomainDataSource1_LoadedData" Name="productGroupDomainDataSource1" QueryName="GetPRODUCTGROUPSQuery" Width="0" DomainContext="{StaticResource MainDataContext}">
+                </riaControls:DomainDataSource>
+                <sdk:DataGrid AutoGenerateColumns="False" Height="124" ItemsSource="{Binding Source={StaticResource productGroupChildrenProductGroupsViewSource}}" Name="childrenProductGroupsDataGrid" RowDetailsVisibilityMode="VisibleWhenSelected" Width="434">
+                    <sdk:DataGrid.Columns>
+                        <sdk:DataGridTextColumn x:Name="idColumn" Binding="{Binding Path=Id, Mode=OneWay}" Header="Id" IsReadOnly="True" Width="SizeToHeader" />
+                        <sdk:DataGridTextColumn x:Name="nameColumn" Binding="{Binding Path=Name}" Header="Name" Width="SizeToHeader" />
+                        <sdk:DataGridTextColumn x:Name="parentProductIdColumn" Binding="{Binding Path=ParentProductId}" Header="Parent Product Id" Width="SizeToHeader" />
+                    </sdk:DataGrid.Columns>
+                </sdk:DataGrid>
+            </StackPanel>
+
+        </ScrollViewer>
+    </Grid>
+
+</navigation:Page>
